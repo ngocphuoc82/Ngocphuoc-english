@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEEDS OF PLANTS AND ANIMALS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FEFCE8; /* Cheerful Yellow */
+        }
+        .card {
+            background-color: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            border: 4px solid #A7F3D0; /* Bright Green Border */
+        }
+        .btn {
+            border-radius: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .btn:disabled {
+            background-color: #94A3B8;
+            cursor: not-allowed;
+        }
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+        }
+        .btn-primary {
+            background-color: #F97316; /* Bright Orange */
+            color: white;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background-color: #EA580C;
+        }
+        .btn-secondary {
+            background-color: #64748B;
+            color: white;
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #475569;
+        }
+        .btn-danger {
+            background-color: #DC2626; /* Red */
+            color: white;
+        }
+        .btn-danger:hover:not(:disabled) {
+            background-color: #B91C1C;
+        }
+        .btn-success {
+            background-color: #84CC16; /* Lime Green */
+            color: white;
+        }
+        .btn-success:hover:not(:disabled) {
+            background-color: #65A30D;
+        }
+        .btn-icon {
+            background: none;
+            border: none;
+            font-size: 1.75rem;
+            color: #F97316; /* Bright Orange */
+            cursor: pointer;
+        }
+        .sentence.active {
+            background-color: #FEF3C7; /* Light Yellow */
+            transform: scale(1.02);
+            box-shadow: 0 4px 14px 0 rgba(0,0,0,0.05);
+        }
+        .draggable {
+            cursor: grab;
+            user-select: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            touch-action: none; /* Important for touch events */
+        }
+        .dragging {
+            opacity: 0.4;
+        }
+        .drop-target {
+            border: 2px dashed #CBD5E1;
+            min-height: 100px;
+            border-radius: 0.75rem;
+            background-color: #F8FAFC;
+            transition: all 0.2s;
+            padding: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-content: flex-start;
+        }
+        .drop-target.over {
+            background-color: #D9F99D; /* Light Lime */
+            border-color: #84CC16;
+            transform: scale(1.03);
+        }
+        .hidden {
+            display: none;
+        }
+        h1, h2 {
+            color: #9333EA; /* Vibrant Purple */
+        }
+    </style>
+</head>
+<body class="text-gray-800 flex items-center justify-center min-h-screen p-4">
+
+    <div id="app-container" class="card w-full max-w-4xl mx-auto p-6 md:p-8">
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="text-center">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">Bài học: Nhu Cầu Của Thực Vật và Động Vật</h1>
+            <p class="text-lg text-gray-600 mb-8">Chào mừng các em đến với bài học! Hãy cùng khám phá thế giới của cây cối và các loài động vật nhé.</p>
+            <button id="start-btn" class="btn btn-primary text-xl">Bắt đầu</button>
+        </div>
+
+        <!-- Reading Section -->
+        <div id="reading-section" class="hidden">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-6">Luyện đọc</h2>
+            <div id="sentences-container" class="space-y-4 my-8">
+                <!-- Sentences will be injected here -->
+            </div>
+            <div id="reading-controls" class="mt-6 text-center space-y-4">
+                <div class="flex justify-center items-center gap-4">
+                    <button id="record-btn" class="btn btn-danger">
+                        <i class="fas fa-microphone mr-2"></i>Bắt đầu Luyện đọc
+                    </button>
+                    <button id="skip-btn" class="btn btn-secondary">Bỏ qua</button>
+                </div>
+            </div>
+            <p id="status-message" class="text-center mt-4 font-semibold"></p>
+        </div>
+        
+        <!-- Practice Section -->
+        <div id="practice-section" class="hidden">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-6">Luyện tập</h2>
+            <div id="practice-content" class="mb-6">
+                <!-- Practice activities will be injected here -->
+            </div>
+             <div class="text-center mt-6">
+                <button id="next-practice-btn" class="btn btn-primary hidden">Câu tiếp theo</button>
+            </div>
+        </div>
+
+        <!-- Final Screen -->
+        <div id="final-screen" class="hidden text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-green-500 mb-4">Hoàn thành!</h1>
+            <p class="text-lg text-gray-600 mb-6">Cùng xem lại kết quả học tập của em nhé!</p>
+            <div id="final-summary" class="text-left space-y-6">
+                <div>
+                    <h3 class="font-bold text-xl text-green-600 mb-2">✅ Các câu đã làm đúng (<span id="correct-count">0</span>)</h3>
+                    <ul id="correct-list" class="list-disc list-inside space-y-1 text-gray-700"></ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xl text-red-600 mb-2">❌ Các câu đã làm sai hoặc bỏ qua (<span id="incorrect-count">0</span>)</h3>
+                    <ul id="incorrect-list" class="list-disc list-inside space-y-1 text-gray-700"></ul>
+                </div>
+            </div>
+            <button id="restart-btn" class="btn btn-primary text-xl mt-8">Làm lại từ đầu</button>
+        </div>
+
+    </div>
+    
+    <div id="creator-credit" class="fixed bottom-4 right-4 text-xs text-gray-500 font-semibold bg-white/50 backdrop-blur-sm px-2 py-1 rounded-md">
+        tạo bởi Ngọc Phước
+    </div>
+
+    <script>
+        // --- DATA ---
+        const bookSentences = [
+            "What do plants need?", "Living things are alive.", "Plants are living things.", "Plants can grow.", "Plants can change.", "Living things have needs.", "Plants need air.", "Plants need water.", "Plants need light.", "Plants get light from the Sun.", "Light lets plants grow and change.", "How do plants get what they need?", "Plants have parts.", "The parts help a plant live.", "The parts help a plant grow.", "Most plants have roots.", "Roots hold plants in the ground.", "Roots take in water.", "Roots take in nutrients.", "Nutrients are materials that living things need.", "Leaves of green plants make food.", "Water and nutrients enter the roots.", "Water and nutrients go up the stem.", "They go to the leaves.", "Green leaves take in air and energy from sunlight.", "Green leaves use energy from air, water, and sunlight to make food.", "What do animals need?", "Animals are living things.", "Animals grow and change.", "Animals have needs.", "Animals need air.", "Animals need water.", "Animals need food."
+        ];
+
+        const practiceActivities = [
+            { type: 'mcq', question: 'What part of the plant takes in water from the ground?', options: ['Leaves', 'Stem', 'Roots', 'Flower'], answer: 'Roots' },
+            { type: 'mcq', question: 'What do plants need from the sun to make food?', options: ['Water', 'Light', 'Air', 'Soil'], answer: 'Light' },
+            { type: 'mcq', question: 'What do animals need to eat to get energy?', options: ['Food', 'Toys', 'Sleep', 'Friends'], answer: 'Food' },
+            { type: 'unscramble', word: 'leaves', scrambled: 'seavel', question: 'Sắp xếp các chữ cái sau thành từ có nghĩa:', image: '<i class="fas fa-leaf text-green-500 text-5xl"></i>' },
+            { type: 'unscramble', word: 'water', scrambled: 'treaw', question: 'Sắp xếp các chữ cái sau thành từ có nghĩa:', image: '<i class="fas fa-tint text-blue-500 text-5xl"></i>' },
+            { type: 'drag-sort',
+                question: 'Kéo các hình vào cột đúng nhé!',
+                items: [
+                    { id: 'light', content: '<i class="fas fa-sun text-yellow-500 text-2xl"></i><span class="mt-1 text-xs">Light</span>', category: 'plants' },
+                    { id: 'soil', content: '<i class="fas fa-layer-group text-yellow-800 text-2xl"></i><span class="mt-1 text-xs">Soil</span>', category: 'plants' },
+                    { id: 'water', content: '<i class="fas fa-tint text-blue-500 text-2xl"></i><span class="mt-1 text-xs">Water</span>', category: 'both' },
+                    { id: 'air', content: '<i class="fas fa-wind text-gray-400 text-2xl"></i><span class="mt-1 text-xs">Air</span>', category: 'both' },
+                    { id: 'food', content: '<i class="fas fa-drumstick-bite text-orange-600 text-2xl"></i><span class="mt-1 text-xs">Food</span>', category: 'animals' }
+                ],
+                columns: [ { id: 'plants', title: 'What do plants need?' }, { id: 'both', title: 'We both need' }, { id: 'animals', title: 'What do animals need?' } ]
+            },
+            { type: 'arrange-sentence-text', question: 'Sắp xếp các từ sau thành câu đúng:', words: ['Plants', 'need', 'water', '.'], answer: 'Plants need water.' },
+            { type: 'arrange-sentence-text', question: 'Sắp xếp các từ sau thành câu đúng:', words: ['Animals', 'need', 'food', '.'], answer: 'Animals need food.' },
+            { type: 'listening', question: 'Nghe và điền vào chỗ trống:', sentence: 'Plants and animals need things to live.', blankWord: 'live' },
+            { type: 'listening', question: 'Nghe và điền vào chỗ trống:', sentence: 'Roots take in water from the soil.', blankWord: 'water' },
+        ];
+
+        // --- STATE ---
+        let currentSentenceIndex = 0;
+        let currentPracticeIndex = 0;
+        let correctAnswers = [];
+        let incorrectAnswers = [];
+
+        // --- SPEECH RECOGNITION (Optional) ---
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition;
+        const isRecognitionSupported = !!SpeechRecognition;
+        if (isRecognitionSupported) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+        }
+
+        // --- DOM ELEMENTS ---
+        const startScreen = document.getElementById('start-screen');
+        const readingSection = document.getElementById('reading-section');
+        const practiceSection = document.getElementById('practice-section');
+        const finalScreen = document.getElementById('final-screen');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const sentencesContainer = document.getElementById('sentences-container');
+        const recordBtn = document.getElementById('record-btn');
+        const skipBtn = document.getElementById('skip-btn');
+        const statusMessage = document.getElementById('status-message');
+        const practiceContent = document.getElementById('practice-content');
+        const nextPracticeBtn = document.getElementById('next-practice-btn');
+
+        // --- DRAG & DROP STATE (for mobile) ---
+        let draggedItem = null;
+        let ghostElement = null;
+
+
+        // --- FUNCTIONS ---
+
+        /**
+         * Calculates the Levenshtein distance between two strings.
+         */
+        function levenshteinDistance(s1, s2) {
+            s1 = s1.toLowerCase();
+            s2 = s2.toLowerCase();
+            const costs = [];
+            for (let i = 0; i <= s1.length; i++) {
+                let lastValue = i;
+                for (let j = 0; j <= s2.length; j++) {
+                    if (i === 0) {
+                        costs[j] = j;
+                    } else {
+                        if (j > 0) {
+                            let newValue = costs[j - 1];
+                            if (s1.charAt(i - 1) !== s2.charAt(j - 1)) {
+                                newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                            }
+                            costs[j - 1] = lastValue;
+                            lastValue = newValue;
+                        }
+                    }
+                }
+                if (i > 0) {
+                    costs[s2.length] = lastValue;
+                }
+            }
+            return costs[s2.length];
+        }
+        
+        /**
+         * Calculates the similarity percentage between two strings.
+         */
+        function calculateSimilarity(s1, s2) {
+            let longer = s1;
+            let shorter = s2;
+            if (s1.length < s2.length) {
+                longer = s2;
+                shorter = s1;
+            }
+            const longerLength = longer.length;
+            if (longerLength === 0) {
+                return 100.0;
+            }
+            return (longerLength - levenshteinDistance(longer, shorter)) / longerLength * 100;
+        }
+
+
+        function showScreen(screen) {
+            [startScreen, readingSection, practiceSection, finalScreen].forEach(s => s.classList.add('hidden'));
+            screen.classList.remove('hidden');
+        }
+        
+        function displayCurrentSentence() {
+            if (currentSentenceIndex >= bookSentences.length) {
+                startPractice();
+                return;
+            }
+            const sentence = bookSentences[currentSentenceIndex];
+            sentencesContainer.innerHTML = `<div class="sentence active p-4 rounded-lg flex items-center justify-between">
+                <p class="text-lg md:text-xl font-semibold">${sentence}</p>
+                <button class="btn-icon" onclick="speak('${sentence.replace(/'/g, "\\'")}')"><i class="fas fa-volume-up"></i></button>
+            </div>`;
+            statusMessage.textContent = 'Nhấn nút "Bắt đầu Luyện đọc" để ứng dụng lắng nghe.';
+            statusMessage.style.color = '#475569';
+            recordBtn.disabled = false;
+            skipBtn.disabled = false;
+            recordBtn.innerHTML = '<i class="fas fa-microphone mr-2"></i>Bắt đầu Luyện đọc';
+        }
+
+        function speak(text) {
+            if (!window.speechSynthesis) return;
+            speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            speechSynthesis.speak(utterance);
+        }
+
+        function startSpeechPractice() {
+            if (!isRecognitionSupported) {
+                statusMessage.textContent = 'Trình duyệt của bạn không hỗ trợ nhận dạng giọng nói.';
+                statusMessage.style.color = '#ef4444';
+                return;
+            }
+            recognition.start();
+        }
+
+        function moveToNextSentence() {
+            currentSentenceIndex++;
+            displayCurrentSentence();
+        }
+
+        function startPractice() {
+            showScreen(practiceSection);
+            currentPracticeIndex = 0;
+            correctAnswers = [];
+            incorrectAnswers = [];
+            displayCurrentPractice();
+        }
+        
+        function proceedToNextPractice() {
+            currentPracticeIndex++;
+            displayCurrentPractice();
+        }
+
+        function displayCurrentPractice() {
+            if (currentPracticeIndex >= practiceActivities.length) {
+                showFinalScreen();
+                return;
+            }
+            nextPracticeBtn.classList.add('hidden');
+            const activity = practiceActivities[currentPracticeIndex];
+            practiceContent.innerHTML = '';
+
+            switch (activity.type) {
+                case 'mcq': displayMcq(activity); break;
+                case 'unscramble': displayUnscramble(activity); break;
+                case 'drag-sort': displayDragSort(activity); break;
+                case 'arrange-sentence-text': displayArrangeSentenceText(activity); break;
+                case 'listening': displayListening(activity); break;
+            }
+        }
+        
+        function showControls(activity, checkHandler) {
+            const controls = document.createElement('div');
+            controls.className = 'text-center flex justify-center gap-4 mt-4';
+            controls.innerHTML = `
+                <button id="check-btn" class="btn btn-primary"><i class="fas fa-check mr-2"></i>Kiểm tra</button>
+                <button id="skip-practice-btn" class="btn btn-secondary">Bỏ qua</button>
+            `;
+            practiceContent.appendChild(controls);
+            
+            document.getElementById('check-btn').addEventListener('click', checkHandler);
+            document.getElementById('skip-practice-btn').addEventListener('click', () => {
+                incorrectAnswers.push({ question: activity.question, answer: 'Bỏ qua' });
+                proceedToNextPractice();
+            });
+        }
+
+        function disableControls() {
+            const checkBtn = document.getElementById('check-btn');
+            const skipBtn = document.getElementById('skip-practice-btn');
+            if (checkBtn) checkBtn.disabled = true;
+            if (skipBtn) skipBtn.classList.add('hidden');
+            nextPracticeBtn.classList.remove('hidden');
+        }
+
+        function displayMcq(activity) {
+            const optionsHtml = activity.options.map(option => `<button class="w-full text-left p-4 border rounded-lg hover:bg-orange-100 transition mcq-option">${option}</button>`).join('');
+            practiceContent.innerHTML = `<h3 class="text-xl font-semibold mb-4 text-center">${activity.question}</h3><div class="space-y-3">${optionsHtml}</div><p id="feedback" class="mt-4 font-semibold text-center"></p>`;
+            
+            let selectedAnswer = null;
+            document.querySelectorAll('.mcq-option').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.mcq-option').forEach(btn => btn.classList.remove('ring-2', 'ring-orange-400'));
+                    button.classList.add('ring-2', 'ring-orange-400');
+                    selectedAnswer = button.textContent;
+                });
+            });
+
+            showControls(activity, () => {
+                if (selectedAnswer === null) {
+                    document.getElementById('feedback').textContent = "Em hãy chọn một đáp án nhé!";
+                    document.getElementById('feedback').style.color = '#ef4444';
+                    return;
+                }
+                checkMcqAnswer(selectedAnswer, activity);
+            });
+        }
+        
+        function checkMcqAnswer(selected, activity) {
+            const feedback = document.getElementById('feedback');
+            if (selected === activity.answer) {
+                feedback.textContent = 'Chính xác! Tuyệt vời!';
+                feedback.style.color = '#22c55e';
+                correctAnswers.push({ question: activity.question, answer: selected });
+            } else {
+                feedback.textContent = `Chưa đúng. Đáp án là: ${activity.answer}`;
+                feedback.style.color = '#ef4444';
+                incorrectAnswers.push({ question: activity.question, answer: selected, correct: activity.answer });
+            }
+            disableControls();
+        }
+
+        function displayUnscramble(activity) {
+            practiceContent.innerHTML = `
+                <h3 class="text-xl font-semibold mb-4 text-center">${activity.question}</h3>
+                <div class="text-center mb-4">${activity.image}</div>
+                <p class="text-4xl font-bold tracking-widest text-center bg-gray-100 p-6 rounded-lg mb-4">${activity.scrambled}</p>
+                <input type="text" id="unscramble-input" class="w-full p-3 border rounded-lg text-lg" placeholder="Nhập câu trả lời của bạn...">
+                <p id="feedback" class="mt-4 font-semibold text-center"></p>`;
+            showControls(activity, () => checkUnscrambleAnswer(activity));
+        }
+        
+        function checkUnscrambleAnswer(activity) {
+            const input = document.getElementById('unscramble-input').value.trim().toLowerCase();
+            const feedback = document.getElementById('feedback');
+            if (input === activity.word) {
+                feedback.textContent = 'Đúng rồi! Em giỏi quá!';
+                feedback.style.color = '#22c55e';
+                correctAnswers.push({ question: activity.question, answer: input });
+            } else {
+                feedback.textContent = `Hãy thử lại nhé!`;
+                feedback.style.color = '#ef4444';
+                incorrectAnswers.push({ question: activity.question, answer: input, correct: activity.word });
+            }
+            disableControls();
+        }
+        
+        function displayArrangeSentenceText(activity) {
+            const shuffledWords = [...activity.words].sort(() => Math.random() - 0.5);
+            practiceContent.innerHTML = `<h3 class="text-xl font-semibold mb-4 text-center">${activity.question}</h3><div class="p-4 bg-gray-100 rounded-lg flex flex-wrap gap-2 justify-center font-semibold text-lg">${shuffledWords.join(' / ')}</div><input type="text" id="arrange-input" class="w-full p-3 border rounded-lg text-lg mt-4" placeholder="Gõ lại câu đúng vào đây..."><p id="feedback" class="mt-4 font-semibold text-center"></p>`;
+            showControls(activity, () => checkArrangeSentenceTextAnswer(activity));
+        }
+
+        function checkArrangeSentenceTextAnswer(activity) {
+            const inputVal = document.getElementById('arrange-input').value.trim();
+            const input = inputVal.replace(/\.$/, '').toLowerCase();
+            const correctAnswer = activity.answer.replace(/\.$/, '').toLowerCase();
+            const feedback = document.getElementById('feedback');
+            if (input === correctAnswer) {
+                feedback.textContent = 'Chính xác! Câu của em rất hay!';
+                feedback.style.color = '#22c55e';
+                correctAnswers.push({ question: activity.question, answer: inputVal });
+            } else {
+                feedback.textContent = `Chưa đúng lắm. Đáp án đúng là: "${activity.answer}"`;
+                feedback.style.color = '#ef4444';
+                incorrectAnswers.push({ question: activity.question, answer: inputVal, correct: activity.answer });
+            }
+            disableControls();
+        }
+
+        function displayDragSort(activity) {
+            const itemsHtml = activity.items.map(item => `<div class="draggable bg-blue-100 p-2 rounded-lg flex flex-col items-center text-center w-20" draggable="true" data-category="${item.category}" id="item-${item.id}">${item.content}</div>`).join('');
+            practiceContent.innerHTML = `
+                <h3 class="text-xl font-semibold mb-4 text-center">${activity.question}</h3>
+                <div id="item-bank" class="mb-6 p-4 bg-gray-100 rounded-lg flex flex-wrap gap-4 justify-center min-h-[80px]">${itemsHtml}</div>
+                <div class="grid grid-cols-3 gap-4">
+                    ${activity.columns.map(col => `<div class="text-center font-bold">${col.title}</div>`).join('')}
+                    ${activity.columns.map(col => `<div class="drop-target" data-accepts="${col.id}"></div>`).join('')}
+                </div>
+                <p id="feedback" class="mt-4 font-semibold text-center"></p>`;
+            setupDragSort();
+            showControls(activity, () => checkDragSort(activity));
+        }
+
+        function setupDragSort() {
+            const draggables = document.querySelectorAll('.draggable');
+            const containers = document.querySelectorAll('.drop-target, #item-bank');
+
+            // --- Mouse Events for Desktop ---
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', () => {
+                    draggable.classList.add('dragging');
+                });
+                draggable.addEventListener('dragend', () => {
+                    draggable.classList.remove('dragging');
+                });
+            });
+
+            containers.forEach(container => {
+                container.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    container.classList.add('over');
+                });
+                 container.addEventListener('dragleave', () => {
+                    container.classList.remove('over');
+                });
+                container.addEventListener('drop', e => {
+                    e.preventDefault();
+                    const draggingElement = document.querySelector('.dragging');
+                    if (draggingElement) {
+                        container.appendChild(draggingElement);
+                    }
+                    container.classList.remove('over');
+                });
+            });
+
+            // --- Touch Events for Mobile ---
+            draggables.forEach(draggable => {
+                draggable.addEventListener('touchstart', handleTouchStart, { passive: false });
+            });
+            // Listen on the body to allow dragging outside the original element
+            document.body.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.body.addEventListener('touchend', handleTouchEnd);
+        }
+
+        function handleTouchStart(e) {
+            // Ensure the event target is a draggable item
+            const target = e.target.closest('.draggable');
+            if (!target) return;
+            
+            e.preventDefault();
+            draggedItem = target;
+            
+            // Create a "ghost" element for visual feedback
+            ghostElement = draggedItem.cloneNode(true);
+            ghostElement.style.position = 'absolute';
+            ghostElement.style.zIndex = '1000';
+            ghostElement.style.opacity = '0.7';
+            ghostElement.style.pointerEvents = 'none'; // So it doesn't block elements underneath
+            document.body.appendChild(ghostElement);
+
+            // Position the ghost under the finger
+            const touch = e.touches[0];
+            ghostElement.style.left = (touch.pageX - ghostElement.offsetWidth / 2) + 'px';
+            ghostElement.style.top = (touch.pageY - ghostElement.offsetHeight / 2) + 'px';
+
+            // Hide the original element
+            draggedItem.classList.add('dragging');
+        }
+
+        function handleTouchMove(e) {
+            if (!draggedItem) return;
+            
+            e.preventDefault();
+            const touch = e.touches[0];
+
+            // Move the ghost element
+            ghostElement.style.left = (touch.pageX - ghostElement.offsetWidth / 2) + 'px';
+            ghostElement.style.top = (touch.pageY - ghostElement.offsetHeight / 2) + 'px';
+            
+            // Highlight drop target when hovering
+            ghostElement.style.display = 'none'; // Hide ghost to find element underneath
+            const elementUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+            ghostElement.style.display = '';
+
+            document.querySelectorAll('.drop-target').forEach(target => {
+                if (target === elementUnder || target.contains(elementUnder)) {
+                    target.classList.add('over');
+                } else {
+                    target.classList.remove('over');
+                }
+            });
+        }
+
+        function handleTouchEnd(e) {
+            if (!draggedItem) return;
+
+            // Find the drop target
+            ghostElement.style.display = 'none';
+            const touch = e.changedTouches[0];
+            const elementUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+            ghostElement.style.display = '';
+
+            const dropContainer = elementUnder ? elementUnder.closest('.drop-target, #item-bank') : null;
+
+            if (dropContainer) {
+                dropContainer.appendChild(draggedItem);
+            } else {
+                 // If dropped outside any valid container, return to the bank
+                 document.getElementById('item-bank').appendChild(draggedItem);
+            }
+            
+            // Cleanup
+            document.querySelectorAll('.drop-target').forEach(target => target.classList.remove('over'));
+            document.body.removeChild(ghostElement);
+            draggedItem.classList.remove('dragging');
+            draggedItem = null;
+            ghostElement = null;
+        }
+        
+        function checkDragSort(activity) {
+            let allCorrect = true;
+            document.querySelectorAll('.drop-target .draggable').forEach(element => {
+                const parent = element.parentElement;
+                if (parent.dataset.accepts !== element.dataset.category) {
+                    allCorrect = false;
+                }
+            });
+             if (document.querySelectorAll('#item-bank .draggable').length > 0) {
+                allCorrect = false;
+            }
+
+            const feedback = document.getElementById('feedback');
+            if (allCorrect) {
+                feedback.textContent = "Tuyệt vời! Em đã xếp đúng hết rồi!";
+                feedback.style.color = '#22c55e';
+                correctAnswers.push({ question: activity.question, answer: "Đã sắp xếp đúng" });
+            } else {
+                feedback.textContent = "Vẫn còn một vài mục chưa đúng vị trí. Em kiểm tra lại nhé!";
+                feedback.style.color = '#ef4444';
+                incorrectAnswers.push({ question: activity.question, answer: "Sắp xếp sai" });
+            }
+            disableControls();
+        }
+
+        function displayListening(activity) {
+            const sentenceParts = activity.sentence.split(activity.blankWord);
+            practiceContent.innerHTML = `<h3 class="text-xl font-semibold mb-4 text-center">${activity.question}</h3><div class="flex items-center justify-center flex-wrap gap-2 bg-gray-100 p-6 rounded-lg"><p class="text-lg">${sentenceParts[0]}</p><input type="text" id="listening-input" class="p-2 border rounded-lg w-28 text-lg text-center"><p class="text-lg">${sentenceParts[1]}</p><button id="play-listening-btn" class="btn-icon text-3xl text-orange-500 hover:text-orange-600 transition"><i class="fas fa-volume-up"></i></button></div><p id="feedback" class="mt-4 font-semibold text-center"></p>`;
+            
+            const playBtn = document.getElementById('play-listening-btn');
+            playBtn.addEventListener('click', () => {
+                speak(activity.sentence);
+            });
+            showControls(activity, () => checkListeningAnswer(activity));
+        }
+
+        function checkListeningAnswer(activity) {
+            const inputEl = document.getElementById('listening-input');
+            const input = inputEl.value.trim().toLowerCase();
+            const feedback = document.getElementById('feedback');
+            if (input === activity.blankWord) {
+                feedback.textContent = 'Chính xác! Em nghe giỏi lắm!';
+                feedback.style.color = '#22c55e';
+                correctAnswers.push({ question: activity.question, answer: input });
+            } else {
+                feedback.textContent = 'Chưa đúng rồi. Đáp án đúng là: ' + activity.blankWord;
+                feedback.style.color = '#ef4444';
+                incorrectAnswers.push({ question: activity.question, answer: input, correct: activity.blankWord });
+            }
+            disableControls();
+        }
+
+        function showFinalScreen() {
+            document.getElementById('correct-count').textContent = correctAnswers.length;
+            document.getElementById('incorrect-count').textContent = incorrectAnswers.length;
+            
+            const correctList = document.getElementById('correct-list');
+            correctList.innerHTML = '';
+            correctAnswers.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<b>${item.question}</b><br><em><span class="text-green-700">Trả lời đúng:</span> ${item.answer}</em>`;
+                correctList.appendChild(li);
+            });
+
+            const incorrectList = document.getElementById('incorrect-list');
+            incorrectList.innerHTML = '';
+            incorrectAnswers.forEach(item => {
+                const li = document.createElement('li');
+                let answerHtml = `<em><span class="text-red-700">Câu trả lời của em:</span> ${item.answer}</em>`;
+                if (item.correct) {
+                    answerHtml += `<br><em><span class="text-blue-700">Đáp án đúng:</span> ${item.correct}</em>`;
+                }
+                li.innerHTML = `<b>${item.question}</b><br>${answerHtml}`;
+                incorrectList.appendChild(li);
+            });
+
+            showScreen(finalScreen);
+        }
+        
+        // --- EVENT LISTENERS ---
+        startBtn.addEventListener('click', () => {
+            showScreen(readingSection);
+            displayCurrentSentence();
+        });
+
+        restartBtn.addEventListener('click', () => {
+            currentSentenceIndex = 0;
+            currentPracticeIndex = 0;
+            correctAnswers = [];
+            incorrectAnswers = [];
+            showScreen(startScreen);
+        });
+
+        recordBtn.addEventListener('click', startSpeechPractice);
+
+        skipBtn.addEventListener('click', () => {
+            const sentence = bookSentences[currentSentenceIndex];
+            incorrectAnswers.push({ question: `Đọc câu: "${sentence}"`, answer: 'Bỏ qua' });
+            moveToNextSentence();
+        });
+        
+        nextPracticeBtn.addEventListener('click', proceedToNextPractice);
+
+        if (isRecognitionSupported) {
+            recognition.onstart = () => {
+                statusMessage.textContent = 'Đang nghe...';
+                statusMessage.style.color = '#F97316';
+                recordBtn.disabled = true;
+                recordBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang nghe';
+                skipBtn.disabled = true;
+            };
+            
+            recognition.onend = () => {
+                if (recordBtn.disabled) {
+                    recordBtn.disabled = false;
+                    recordBtn.innerHTML = '<i class="fas fa-microphone mr-2"></i>Thử lại';
+                    skipBtn.disabled = false;
+                }
+            };
+
+            recognition.onerror = (event) => {
+                let errorMessage = 'Lỗi: ' + event.error;
+                if (event.error === 'no-speech') {
+                    errorMessage = 'Không nhận dạng được giọng nói. Em hãy thử nói to và rõ hơn nhé.';
+                } else if (event.error === 'network') {
+                    errorMessage = 'Lỗi mạng, không thể kết nối tới dịch vụ nhận dạng giọng nói.';
+                }
+                statusMessage.textContent = errorMessage;
+                statusMessage.style.color = '#ef4444';
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript.toLowerCase().replace(/[\.,\?]/g, '');
+                const targetSentence = bookSentences[currentSentenceIndex].toLowerCase().replace(/[\.,\?]/g, '');
+                const originalSentence = bookSentences[currentSentenceIndex];
+
+                const similarity = calculateSimilarity(transcript, targetSentence);
+
+                if (similarity >= 85) {
+                    statusMessage.innerHTML = `Tuyệt vời! <span class="text-blue-600">(Độ chính xác: ${similarity.toFixed(0)}%)</span>`;
+                    statusMessage.style.color = '#22c55e';
+                    correctAnswers.push({ question: `Đọc câu: "${originalSentence}"`, answer: `Đọc đúng (${similarity.toFixed(0)}%)` });
+                    recordBtn.disabled = true; 
+                    skipBtn.disabled = true;
+                    setTimeout(moveToNextSentence, 2500);
+                } else {
+                    statusMessage.innerHTML = `Chưa đạt! Cần chính xác hơn. <span class="text-blue-600">(Độ chính xác: ${similarity.toFixed(0)}%)</span><br>Em đã nói: "<span class="italic">${event.results[0][0].transcript}</span>"`;
+                    statusMessage.style.color = '#ef4444';
+                    incorrectAnswers.push({ 
+                        question: `Đọc câu: "${originalSentence}"`, 
+                        answer: `Đọc sai (${similarity.toFixed(0)}%): "${transcript}"`, 
+                        correct: `"${originalSentence}"` 
+                    });
+                     recordBtn.disabled = false; 
+                     recordBtn.innerHTML = '<i class="fas fa-microphone mr-2"></i>Thử lại';
+                     skipBtn.disabled = false;
+                }
+            };
+        }
+    </script>
+</body>
+</html>
